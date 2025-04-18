@@ -3,6 +3,9 @@ import * as Yup from 'yup';
 import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
 
+import { addContact }from "../../redux/contactsSlice"
+import { useDispatch } from 'react-redux';
+
 const UserSchema = Yup.object().shape({
   name: Yup.string()
     .matches(/^[^0-9]*$/, 'Name should not contain numbers')
@@ -14,9 +17,12 @@ const UserSchema = Yup.object().shape({
     .required('This field is required'),
 });
 
-export default function ContactForm({ onSubmit }) {
+export default function ContactForm() {
   const userId = nanoid();
-
+  const dispatch = useDispatch();
+  const onSubmit = (values, id) => {
+    dispatch(addContact({id, ...values}));
+  }
   return (
     <Formik
       initialValues={{ name: '', number: '' }}
