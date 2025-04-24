@@ -5,6 +5,7 @@ import css from './ContactForm.module.css';
 
 import { addContact }from "../../redux/contactsSlice"
 import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
 
 const UserSchema = Yup.object().shape({
   name: Yup.string()
@@ -18,25 +19,26 @@ const UserSchema = Yup.object().shape({
 });
 
 export default function ContactForm() {
-  const userId = nanoid();
   const dispatch = useDispatch();
-  const onSubmit = (values, id) => {
+  const formId = useMemo(() => nanoid(), []);
+  const onSubmit = (values) => {
+    const id = nanoid();
     dispatch(addContact({id, ...values}));
   }
   return (
     <Formik
       initialValues={{ name: '', number: '' }}
       onSubmit={(values, actions) => {
-        onSubmit(values, userId);
+        onSubmit(values);
         actions.resetForm();
       }}
       validationSchema={UserSchema}
     >
       <Form className={css.form}>
         <div className={css.fieldGroup}>
-          <label htmlFor={`${userId}-name`}>Name:</label>
+          <label htmlFor={`${formId}-name`}>Name:</label>
           <Field 
-          id={`${userId}-name`} 
+          id={`${formId}-name`} 
           type="text" name="name" 
           className={css.input} 
           />
@@ -44,9 +46,9 @@ export default function ContactForm() {
         </div>
 
         <div className={css.fieldGroup}>
-          <label htmlFor={`${userId}-number`}>Number:</label>
+          <label htmlFor={`${formId}-number`}>Number:</label>
           <Field 
-          id={`${userId}-number`} 
+          id={`${formId}-number`} 
           type="text" name="number" 
           className={css.input} 
           />
